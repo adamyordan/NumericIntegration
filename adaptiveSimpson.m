@@ -9,43 +9,55 @@
 %             TOL     absolute error convergence tolerance
 %
 %     output:
-%             result  approximate value of the definite integral of f(x)
+%             y       approximate value of the definite integral of f(x)
 %                     over the interval a < x < b
+%
 % ATAS INI MASIH COPASAN
 
-function [y err] = adaptiveSimpson (f, a, b, TOL)
+function y = adaptiveSimpson (f, a, b, TOL)
+
+c = (a + b) / 2
 
 fa = f(a);
 fb = f(b);
-fc = f((a-b)/2);
+fc = f(c);
 
+% Calculating Simpson Rule for interval a .. b
 s = (b-a) * (fa + 4*fc + fb)/6;
 
-[y err] = adapSimpHelper (f, a, b, TOL, s);
+% Calculating result for Adaptive Rule 
+[y err n] = adapSimpHelper (f, a, c, b, TOL, fa, fc, fb, s);
 
 
-function [y err] = adapSimpHelper (f, a, b, TOL, s)
 
-c = (a+b) / 2;
-fa = f(a);
-fb = f(b);
-fc = f((a-b)/2);
-fd = f((a+c)/2);
-fe = f((c+b)/2);
+function [y err n] = adapSimpHelper (f, a, c, b, TOL, fa, fc, fb, s)
+
+d  = (a + c) / 2;
+e  = (c + b) / 2;
+fd = f(d);
+fe = f(e);
 s1 = (c-a) * (fa + 4 * fd + fc) / 6;
 s2 = (b-c) * (fc + 4 * fe + fb) / 6;
 
+% Estimating error 
 err = calcError(s,s1,s2);
 
+% Checking Stop Condition
 if (err < TOL)
 	y = s1 + s2;
+	n = 2;
 else
-	[y1 err1] = adapSimpHelper (f, a, c, TOL / 2, s1);
-	[y2 err2] = adapSimpHelper (f, c, b, TOL / 2, s2);
+	[y1 err1 n1] = adapSimpHelper (f, a, d, c, TOL / 2.0, fa, fd, fc, s1);
+	[y2 err2 n2] = adapSimpHelper (f, c, e, b, TOL / 2.0, fc, fe, fb, s2);
 	err = err1 + err2;
 	y = y1 + y2;
+	n = n1 + n2 + 2;
 end
+
+
+
 
 function e = calcError (s1, s21, s22)
 s2 = s21 + s22;
-e = abs((s1 - s2) / s2);
+% e = abs((s1 - s21) / s21);
+e = abs(s1 - s2);
