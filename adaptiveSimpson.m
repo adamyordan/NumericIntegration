@@ -30,7 +30,7 @@ s = (b-a) * (fa + 4*fc + fb)/6;
 
 
 
-function [y err n] = adapSimpHelper (f, a, c, b, TOL, fa, fc, fb, s)
+function y = adapSimpHelper (f, a, c, b, TOL, fa, fc, fb, s)
 
 d  = (a + c) / 2;
 e  = (c + b) / 2;
@@ -45,13 +45,10 @@ err = calcError(s,s1,s2);
 % Checking Stop Condition
 if (err < TOL)
 	y = s1 + s2;
-	n = 2;
 else
-	[y1 err1 n1] = adapSimpHelper (f, a, d, c, TOL / 2.0, fa, fd, fc, s1);
-	[y2 err2 n2] = adapSimpHelper (f, c, e, b, TOL / 2.0, fc, fe, fb, s2);
-	err = err1 + err2;
+	y1 = adapSimpHelper (f, a, d, c, TOL / 2.0, fa, fd, fc, s1);
+	y2 = adapSimpHelper (f, c, e, b, TOL / 2.0, fc, fe, fb, s2);
 	y = y1 + y2;
-	n = n1 + n2 + 2;
 end
 
 
