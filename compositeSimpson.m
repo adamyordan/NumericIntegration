@@ -18,7 +18,7 @@ function result = compositeSimpson(f,a,b,h)
 % Checking prerequisite for simpson formula
 n = floor((b-a) / h);
 if (mod(n+1, 3) ~= 0)
-	warning ('n + 1 should be a factor of 3');
+	% warning ('n + 1 should be a factor of 3');
 end
 
 % Calculating values of x
@@ -42,4 +42,4 @@ for i = 2:((n+1)/2)
 end
 
 % Calculate final output
-result = (h/3) * (f(a) + 2*q + 4*p + f(b));
+result = h * (f(a) + 2*q + 4*p + f(b)) / 3;

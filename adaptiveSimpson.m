@@ -16,7 +16,7 @@
 
 function y = adaptiveSimpson (f, a, b, TOL)
 
-c = (a + b) / 2
+c = (a + b) / 2;
 
 fa = f(a);
 fb = f(b);
@@ -26,7 +26,7 @@ fc = f(c);
 s = (b-a) * (fa + 4*fc + fb)/6;
 
 % Calculating result for Adaptive Rule 
-[y err n] = adapSimpHelper (f, a, c, b, TOL, fa, fc, fb, s);
+y = adapSimpHelper (f, a, c, b, TOL, fa, fc, fb, s);
 
 
 
