@@ -1,6 +1,6 @@
 % AdaptiveSimpson     approximate the definite integral of an arbitrary function
 %                     to within a specified error tolerance using adaptive 
-%                     quadrature based on Simpson's rule <-- SALAH
+%                     quadrature based on Simpsons rule
 %
 %     inputs:
 %             f       function
@@ -16,45 +16,40 @@
 
 function y = adaptiveSimpson (f, a, b, TOL)
 
-c = (a + b) / 2;
+	c = (a + b) / 2;
 
-fa = f(a);
-fb = f(b);
-fc = f(c);
+	fa = f(a);
+	fb = f(b);
+	fc = f(c);
 
-% Calculating Simpson Rule for interval a .. b
-s = (b-a) * (fa + 4*fc + fb)/6;
+	% Calculating Simpson Rule for interval a .. b
+	s = (b-a) * (fa + 4*fc + fb) / 6;
 
-% Calculating result for Adaptive Rule 
-y = adapSimpHelper (f, a, c, b, TOL, fa, fc, fb, s);
+	% Calculating result for Adaptive Rule 
+	y = adapSimpHelper (f, a, c, b, TOL, fa, fc, fb, s);
 
+end
 
 
 function y = adapSimpHelper (f, a, c, b, TOL, fa, fc, fb, s)
 
-d  = (a + c) / 2;
-e  = (c + b) / 2;
-fd = f(d);
-fe = f(e);
-s1 = (c-a) * (fa + 4 * fd + fc) / 6;
-s2 = (b-c) * (fc + 4 * fe + fb) / 6;
+	d  = (a + c) / 2;
+	e  = (c + b) / 2;
+	fd = f(d);
+	fe = f(e);
+	s1 = (c-a) * (fa + 4 * fd + fc) / 6;
+	s2 = (b-c) * (fc + 4 * fe + fb) / 6;
 
-% Estimating error 
-err = calcError(s,s1,s2);
+	% Estimating error 
+	err = abs(s1 + s2 - s);
 
-% Checking Stop Condition
-if (err < TOL)
-	y = s1 + s2;
-else
-	y1 = adapSimpHelper (f, a, d, c, TOL / 2.0, fa, fd, fc, s1);
-	y2 = adapSimpHelper (f, c, e, b, TOL / 2.0, fc, fe, fb, s2);
-	y = y1 + y2;
+	% Checking Stop Condition
+	if (err < TOL * 15.0)
+		y = (s1 + s2) / 15.0;
+	else
+		y1 = adapSimpHelper (f, a, d, c, TOL / 2.0, fa, fd, fc, s1);
+		y2 = adapSimpHelper (f, c, e, b, TOL / 2.0, fc, fe, fb, s2);
+		y = y1 + y2;
+	end
+
 end
-
-
-
-
-function e = calcError (s1, s21, s22)
-s2 = s21 + s22;
-% e = abs((s1 - s21) / s21);
-e = abs(s1 - s2);
